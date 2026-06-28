@@ -5,7 +5,6 @@ services:
   mysql:
     image: mysql:8.0
     container_name: mysql-thietbicongnghe
-
     restart: always
 
     environment:
@@ -18,9 +17,29 @@ services:
     volumes:
       - mysql_data:/var/lib/mysql
 
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin-thietbicongnghe
+
+    restart: always
+
+    depends_on:
+      - mysql
+
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: 123456
+
+    ports:
+      - "8081:80"
+
   backend:
+
     build: .
+
     container_name: backend-thietbicongnghe
+
+    restart: always
 
     depends_on:
       - mysql
