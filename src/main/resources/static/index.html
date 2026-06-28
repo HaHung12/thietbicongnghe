@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auth System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="auth-container">
+    <div id="login-form" class="form-box">
+        <h2>Đăng Nhập</h2>
+        <input id="login-username" type="text" placeholder="Username" required>
+        <input id="login-password" type="password" placeholder="Password" required>
+        <button onclick="login()">Đăng Nhập</button>
+        <p>Chưa có tài khoản? <a href="#" onclick="toggleForm()">Đăng ký ngay</a></p>
+    </div>
+
+    <div id="register-form" class="form-box" style="display: none;">
+        <h2>Đăng Ký</h2>
+        <input id="reg-username" type="text" placeholder="Username" required>
+        <input id="reg-password" type="password" placeholder="Password" required>
+        <input id="reg-fullname" type="text" placeholder="Full Name" required>
+        <input id="reg-email" type="email" placeholder="Email" required>
+        <button onclick="register()">Đăng Ký</button>
+        <p>Đã có tài khoản? <a href="#" onclick="toggleForm()">Đăng nhập</a></p>
+    </div>
+
+    <div id="result" class="message"></div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
