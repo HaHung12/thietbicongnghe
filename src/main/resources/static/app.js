@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = '';
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('login-form').addEventListener('submit', login);
