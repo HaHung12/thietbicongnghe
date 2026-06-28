@@ -1,50 +1,141 @@
 const BASE_URL = 'http://localhost:8080';
 
-// Hàm chuyển đổi form
-function toggleForm() {
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('login-form').addEventListener('submit', login);
+    document.getElementById('register-form').addEventListener('submit', register);
+    document.getElementById('show-register').addEventListener('click', (event) => {
+        event.preventDefault();
+        showRegisterForm();
+    });
+    document.getElementById('show-login').addEventListener('click', (event) => {
+        event.preventDefault();
+        showLoginForm();
+    });
+    document.getElementById('logout-button').addEventListener('click', showLoginForm);
+
+    setupEnterToNextInput('login-form');
+    setupEnterToNextInput('register-form');
+});
+
+function showLoginForm() {
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
+    const mainScreen = document.getElementById('main-screen');
 
-    if (loginForm.style.display === 'none') {
-        loginForm.style.display = 'block';
-        registerForm.style.display = 'none';
-    } else {
-        loginForm.style.display = 'none';
-        registerForm.style.display = 'block';
+    loginForm.style.display = 'block';
+    registerForm.style.display = 'none';
+    mainScreen.style.display = 'none';
+    setMessage('');
+    loginForm.reset();
+    document.getElementById('login-username').focus();
+}
+
+function showRegisterForm() {
+    const registerForm = document.getElementById('register-form');
+
+    document.getElementById('login-form').style.display = 'none';
+    registerForm.style.display = 'block';
+    document.getElementById('main-screen').style.display = 'none';
+    setMessage('');
+    registerForm.reset();
+    document.getElementById('reg-username').focus();
+}
+
+function showMainScreen(username) {
+    document.getElementById('login-form').style.display = 'none';
+    document.getElementById('register-form').style.display = 'none';
+    document.getElementById('main-screen').style.display = 'block';
+    document.getElementById('welcome-message').innerText = `Xin chào, ${username}`;
+    setMessage('');
+}
+
+async function register(event) {
+    event.preventDefault();
+
+    const userData = {
+        username: document.getElementById('reg-username').value.trim(),
+        password: document.getElementById('reg-password').value.trim(),
+        fullName: document.getElementById('reg-fullname').value.trim(),
+        email: document.getElementById('reg-email').value.trim(),
+        role: 'USER'
+    };
+
+    if (!userData.username || !userData.password || !userData.fullName || !userData.email) {
+        setMessage('Không được để trống các trường');
+        return;
+    }
+
+    try {
+        const message = await postJson('/auth/register', userData);
+        if (message === 'Đăng ký thành công') {
+            alert(message);
+            showLoginForm();
+            return;
+        }
+
+        setMessage(message);
+    } catch (error) {
+        setMessage('Không thể kết nối máy chủ');
     }
 }
 
-// Hàm Register
-async function register() {
+async function login(event) {
+    event.preventDefault();
+
     const userData = {
-        username: document.getElementById('reg-username').value,
-        password: document.getElementById('reg-password').value,
-        fullName: document.getElementById('reg-fullname').value,
-        email: document.getElementById('reg-email').value,
-        role: "USER"
+        username: document.getElementById('login-username').value.trim(),
+        password: document.getElementById('login-password').value.trim()
     };
 
-    const res = await fetch(`${BASE_URL}/auth/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData)
-    });
+    if (!userData.username || !userData.password) {
+        setMessage('Vui lòng nhập tên đăng nhập và mật khẩu');
+        return;
+    }
 
-    document.getElementById('result').innerText = await res.text();
+    try {
+        const message = await postJson('/auth/login', userData);
+        if (message === 'Đăng nhập thành công') {
+            showMainScreen(userData.username);
+            return;
+        }
+
+        setMessage(message);
+    } catch (error) {
+        setMessage('Không thể kết nối máy chủ');
+    }
 }
 
-// Hàm Login
-async function login() {
-    const userData = {
-        username: document.getElementById('login-username').value,
-        password: document.getElementById('login-password').value
-    };
-
-    const res = await fetch(`${BASE_URL}/auth/login`, {
+async function postJson(path, data) {
+    const res = await fetch(`${BASE_URL}${path}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData)
+        body: JSON.stringify(data)
     });
 
-    document.getElementById('result').innerText = await res.text();
+    return res.text();
+}
+
+function setupEnterToNextInput(formId) {
+    const form = document.getElementById(formId);
+    const inputs = Array.from(form.querySelectorAll('input'));
+
+    inputs.forEach((input, index) => {
+        input.addEventListener('keydown', (event) => {
+            if (event.key !== 'Enter') {
+                return;
+            }
+
+            event.preventDefault();
+            const nextInput = inputs[index + 1];
+            if (nextInput) {
+                nextInput.focus();
+            } else {
+                form.requestSubmit();
+            }
+        });
+    });
+}
+
+function setMessage(message) {
+    document.getElementById('result').innerText = message;
 }

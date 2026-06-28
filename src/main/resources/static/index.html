@@ -1,31 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auth System</title>
+    <title>Thiết bị công nghệ</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="auth-container">
-    <div id="login-form" class="form-box">
-        <h2>Đăng Nhập</h2>
-        <input id="login-username" type="text" placeholder="Username" required>
-        <input id="login-password" type="password" placeholder="Password" required>
-        <button onclick="login()">Đăng Nhập</button>
-        <p>Chưa có tài khoản? <a href="#" onclick="toggleForm()">Đăng ký ngay</a></p>
-    </div>
+    <form id="login-form" class="form-box">
+        <h2>Đăng nhập</h2>
+        <input id="login-username" type="text" placeholder="Tên đăng nhập" autocomplete="username" required>
+        <input id="login-password" type="password" placeholder="Mật khẩu" autocomplete="current-password" required>
+        <button type="submit">Đăng nhập</button>
+        <p>Chưa có tài khoản? <a href="#" id="show-register">Đăng ký ngay</a></p>
+    </form>
 
-    <div id="register-form" class="form-box" style="display: none;">
-        <h2>Đăng Ký</h2>
-        <input id="reg-username" type="text" placeholder="Username" required>
-        <input id="reg-password" type="password" placeholder="Password" required>
-        <input id="reg-fullname" type="text" placeholder="Full Name" required>
-        <input id="reg-email" type="email" placeholder="Email" required>
-        <button onclick="register()">Đăng Ký</button>
-        <p>Đã có tài khoản? <a href="#" onclick="toggleForm()">Đăng nhập</a></p>
-    </div>
+    <form id="register-form" class="form-box" style="display: none;">
+        <h2>Đăng ký</h2>
+        <input id="reg-username" type="text" placeholder="Tên đăng nhập" autocomplete="username" required>
+        <input id="reg-password" type="password" placeholder="Mật khẩu" autocomplete="new-password" required>
+        <input id="reg-fullname" type="text" placeholder="Họ và tên" autocomplete="name" required>
+        <input id="reg-email" type="email" placeholder="Email" autocomplete="email" required>
+        <button type="submit">Đăng ký</button>
+        <p>Đã có tài khoản? <a href="#" id="show-login">Đăng nhập</a></p>
+    </form>
+
+    <section id="main-screen" class="form-box" style="display: none;">
+        <h2>Màn hình chính</h2>
+        <p id="welcome-message"></p>
+        <button id="logout-button" type="button">Đăng xuất</button>
+    </section>
 
     <div id="result" class="message"></div>
 </div>
