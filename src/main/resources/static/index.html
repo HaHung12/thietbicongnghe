@@ -9,7 +9,7 @@
 <body>
 
 <div class="auth-container">
-    <form id="login-form" class="form-box">
+    <form id="login-form" class="form-box" style="display: none;">
         <h2>Đăng nhập</h2>
         <input id="login-username" type="text" placeholder="Tên đăng nhập" autocomplete="username" required>
         <input id="login-password" type="password" placeholder="Mật khẩu" autocomplete="current-password" required>
@@ -27,10 +27,51 @@
         <p>Đã có tài khoản? <a href="#" id="show-login">Đăng nhập</a></p>
     </form>
 
-    <section id="main-screen" class="form-box" style="display: none;">
-        <h2>Màn hình chính</h2>
-        <p id="welcome-message"></p>
-        <button id="logout-button" type="button">Đăng xuất</button>
+    <section id="main-screen" class="form-box">
+        <div class="main-header">
+            <div>
+                <h2>Màn hình chính</h2>
+                <p id="welcome-message"></p>
+            </div>
+            <button id="logout-button" type="button" class="secondary-button">Đăng xuất</button>
+        </div>
+
+        <div class="product-controls">
+            <div class="category-buttons">
+                <button class="category-button active" data-category="All">Tất cả</button>
+                <button class="category-button" data-category="Laptop">Laptop</button>
+                <button class="category-button" data-category="Phụ kiện máy tính">Phụ kiện</button>
+                <button class="category-button" data-category="Màn hình máy tính">Màn hình</button>
+            </div>
+            <div class="search-box">
+                <input id="search-input" type="text" placeholder="Tìm sản phẩm...">
+                <button id="search-button" type="button">Tìm</button>
+            </div>
+        </div>
+
+        <div id="product-grid" class="product-grid"></div>
+
+        <section id="detail-view" class="detail-view" style="display: none;">
+            <button id="back-to-grid" type="button" class="secondary-button">← Trở về</button>
+            <div class="detail-card">
+                <img id="detail-image" src="" alt="Ảnh sản phẩm">
+                <div class="detail-body">
+                    <h3 id="detail-name"></h3>
+                    <p class="detail-meta" id="detail-brand"></p>
+                    <p class="detail-meta" id="detail-category"></p>
+                    <p class="detail-price" id="detail-price"></p>
+                    <p id="detail-description"></p>
+                    <div class="detail-stats">
+                        <span id="detail-rating"></span>
+                        <span id="detail-sold"></span>
+                    </div>
+                    <div class="detail-actions">
+                        <button id="add-cart-button" type="button" class="action-button">Thêm vào giỏ hàng</button>
+                        <button id="buy-now-button" type="button" class="action-button primary">Mua ngay</button>
+                    </div>
+                </div>
+            </div>
+        </section>
     </section>
 
     <div id="result" class="message"></div>
