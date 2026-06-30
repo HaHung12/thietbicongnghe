@@ -4,9 +4,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    height: 100vh;
     margin: 0;
-    padding: 20px;
 }
 
 .auth-container {
@@ -14,13 +13,7 @@ body {
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    max-width: 980px;
-    width: 100%;
-}
-
-.form-box {
-    max-width: 350px;
-    margin: 0 auto;
+    width: 350px;
 }
 
 .form-box h2 { text-align: center; color: #333; }
@@ -31,7 +24,7 @@ input {
     margin: 10px 0;
     border: 1px solid #ccc;
     border-radius: 6px;
-    box-sizing: border-box;
+    box-sizing: border-box; /* Quan trọng để input không bị tràn */
 }
 
 button {
@@ -50,145 +43,3 @@ button:hover { background-color: #0056b3; }
 p { text-align: center; font-size: 14px; margin-top: 15px; }
 
 .message { text-align: center; margin-top: 15px; color: #d9534f; font-weight: bold; }
-
-.home-page {
-    width: 100%;
-}
-
-.home-header {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    justify-content: space-between;
-    margin-bottom: 20px;
-}
-
-.logo {
-    font-size: 18px;
-    font-weight: 700;
-    color: #007bff;
-}
-
-.search-bar {
-    flex: 1;
-    display: flex;
-    gap: 10px;
-}
-
-.search-bar input {
-    flex: 1;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    padding: 10px;
-}
-
-.search-bar button {
-    width: auto;
-    padding: 10px 18px;
-}
-
-.user-actions {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.welcome-text {
-    font-weight: 600;
-    color: #333;
-}
-
-.logout-button {
-    width: auto;
-}
-
-.category-nav {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 24px;
-}
-
-.category-nav a {
-    text-decoration: none;
-    color: #333;
-    background: #f5f7fb;
-    padding: 10px 14px;
-    border-radius: 10px;
-    font-size: 14px;
-    border: 1px solid transparent;
-}
-
-.category-nav a:hover {
-    background: #007bff;
-    color: white;
-    border-color: #007bff;
-}
-
-.home-content {
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-}
-
-.hero-banner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    background: linear-gradient(135deg, #007bff 0%, #00a8ff 100%);
-    color: white;
-    padding: 28px;
-    border-radius: 16px;
-    margin-bottom: 20px;
-}
-
-.hero-banner h1 {
-    margin: 0 0 10px;
-    font-size: 28px;
-}
-
-.hero-banner p {
-    margin: 0;
-    color: rgba(255,255,255,0.9);
-}
-
-.hero-links {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.hero-links a {
-    text-decoration: none;
-    background: rgba(255,255,255,0.18);
-    color: white;
-    padding: 10px 16px;
-    border-radius: 10px;
-    font-weight: 600;
-}
-
-.home-cards {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
-}
-
-.card {
-    background: #f8f9ff;
-    border-radius: 16px;
-    padding: 20px;
-    border: 1px solid #e6e9f4;
-}
-
-.card h3 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    color: #007bff;
-}
-
-.card p {
-    margin: 0;
-    color: #555;
-}
