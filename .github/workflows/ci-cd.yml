@@ -2,30 +2,41 @@ name: Spring Boot CI
 
 on:
   push:
-    branches:
-      - main
-      - manh
-
+    branches: [main, manh]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout source
-        uses: actions/checkout@v4
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: thietbicongnghe
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
+    env:
+      SPRING_DATASOURCE_URL: jdbc:mysql://127.0.0.1:3306/thietbicongnghe
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD:
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 21
+          java-version: 17
 
-      - name: Grant execute permission
-        run: chmod +x mvnw
+      - run: chmod +x mvnw
 
-      - name: Build project
-        run: ./mvnw clean package
+      - run: ./mvnw clean package
