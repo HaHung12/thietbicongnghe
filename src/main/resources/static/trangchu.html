@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Trang Chủ & Giỏ Hàng</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .main-content { display: flex; gap: 20px; margin-top: 20px; }
+        .products-section { flex: 2; background: white; padding: 20px; border-radius: 8px; }
+        .cart-section { flex: 1; background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #007bff; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
+        .card { border: 1px solid #ddd; padding: 15px; border-radius: 8px; text-align: center; }
+        .card img { max-width: 100%; height: 120px; object-fit: cover; }
+        .btn { background: #007bff; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; }
+        .btn-danger { background: #dc3545; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .cart-item input { width: 40px; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2>🚀 Hieu_Thiet_Bi_Cong_Nghe</h2>
+        <div>
+            <span id="user-welcome" style="font-weight: bold; color: green;">Xin chào khách!</span>
+            <button class="btn btn-danger" onclick="dangXuat()" style="margin-left: 15px;">Đăng xuất</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="products-section">
+            <h3>Danh sách sản phẩm công nghệ</h3>
+            <div class="grid" id="product-list"></div>
+        </div>
+
+        <div class="cart-section">
+            <h3>🛒 Giỏ hàng của bạn</h3>
+            <div id="cart-list">Giỏ hàng trống</div>
+            <h4 style="margin-top: 20px;">Tổng tiền: <span id="total-price" style="color: red;">0</span> đ</h4>
+        </div>
+    </div>
+
+    <script>
+        // Lấy tên tài khoản vừa đăng nhập thành công (từ câu lệnh SQL của bạn trước đó là binh123)
+        // Lưu ý: Nếu trang đăng nhập cũ của bạn dùng sessionStorage/localStorage để lưu user thì lấy ra, ở đây tạm lấy 'binh123' làm mẫu
+        let currentUser = "binh123"; 
+
+        document.getElementById('user-welcome').innerText = `Xin chào, ${currentUser}`;
+
+        // 1. Tải danh sách sản phẩm từ BE lên giao diện
+        async function loadProducts() {
+            let res = await fetch('/api/products');
+            let products = await res.json();
+            let html = '';
+            products.forEach(p => {
+                html += `
+                    <div class="card">
+                        <img src="${p.image_url}" alt="${p.name}">
+                        <h4>${p.name}</h4>
+                        <p style="color:red; font-weight:bold;">${p.price.toLocaleString()} đ</p>
+                        <button class="btn" onclick="addToCart(${p.id})">Thêm vào giỏ</button>
+                    </div>
+                `;
+            });
+            document.getElementById('product-list').innerHTML = html;
+        }
+
+        // 2. Lấy danh sách giỏ hàng của user hiện tại
+        async function loadCart() {
+            let res = await fetch(`/api/cart?username=${currentUser}`);
+            let cartItems = await res.json();
+            let html = '';
+            let total = 0;
+
+            if(cartItems.length === 0) {
+                document.getElementById('cart-list').innerHTML = "Giỏ hàng trống";
+                document.getElementById('total-price').innerText = "0";
+                return;
+            }
+
+            cartItems.forEach(item => {
+                total += item.price * item.quantity;
+                html += `
+                    <div class="cart-item">
+                        <div>
+                            <span style="font-weight:bold;">${item.name}</span><br>
+                            <small>${item.price.toLocaleString()} đ</small>
+                        </div>
+                        <div>
+                            <input type="number" value="${item.quantity}" min="1" onchange="updateQuantity(${item.id}, this.value)">
+                            <button class="btn btn-danger" onclick="deleteItem(${item.id})" style="padding: 2px 6px;">Xóa</button>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('cart-list').innerHTML = html;
+            document.getElementById('total-price').innerText = total.toLocaleString();
+        }
+
+        // 3. Chức năng THÊM sản phẩm vào giỏ
+        async function addToCart(productId) {
+            await fetch(`/api/cart/add?username=${currentUser}&productId=${productId}`, { method: 'POST' });
+            loadCart(); // Thêm xong nạp lại giỏ hàng liền
+        }
+
+        // 4. Chức năng SỬA số lượng
+        async function updateQuantity(cartId, quantity) {
+            await fetch(`/api/cart/update?cartId=${cartId}&quantity=${quantity}`, { method: 'POST' });
+            loadCart();
+        }
+
+        // 5. Chức năng XÓA sản phẩm ra khỏi giỏ
+        async function deleteItem(cartId) {
+            if(confirm("Bạn muốn xóa sản phẩm này khỏi giỏ hàng chứ?")) {
+                await fetch(`/api/cart/delete?cartId=${cartId}`, { method: 'DELETE' });
+                loadCart();
+            }
+        }
+
+        function dangXuat() {
+            window.location.href = "/"; // Quay về trang đăng nhập ban đầu
+        }
+
+        // Chạy khởi động khi load trang
+        loadProducts();
+        loadCart();
+    </script>
+</body>
+</html>
