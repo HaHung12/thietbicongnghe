@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.thietbicongnghe.service.UserService;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -25,5 +27,13 @@ public class AuthController {
     @PostMapping("/login")
     public String login(@RequestBody User user) {
         return userService.login(user.getUsername(), user.getPassword());
+    }
+
+    @PostMapping("/change-password")
+    public String changePassword(@RequestBody Map<String, String> body) {
+        return userService.changePassword(
+                body.get("username"),
+                body.get("oldPassword"),
+                body.get("newPassword"));
     }
 }

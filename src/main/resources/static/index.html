@@ -52,6 +52,10 @@
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v2a2 2 0 01-2 2H7a2 2 0 01-2-2v-2m14-4V7a2 2 0 00-2-2h-6a2 2 0 00-2 2v12a2 2 0 002 2h6a2 2 0 002-2z"/></svg>
                     Đăng nhập
                 </button>
+                <button type="button" class="menu-item" data-menu="change-pw" style="display:none;" onclick="openChangePassword()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+                    Đổi mật khẩu
+                </button>
                 <button type="button" class="menu-item" onclick="logout()">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v2a2 2 0 01-2 2H5a2 2 0 01-2-2v-2m14-4V7a2 2 0 00-2-2h-6a2 2 0 00-2 2v12a2 2 0 002 2h6a2 2 0 002-2z"/></svg>
                     Đăng xuất
@@ -186,6 +190,17 @@
             <div class="field"><label>Xác nhận mật khẩu</label><input type="password" name="confirm" required placeholder="••••••"></div>
             <button type="submit" class="btn btn-primary btn-lg btn-block">Đăng ký</button>
             <div class="auth-hint">Đã có tài khoản? <a href="#" onclick="switchAuthTab('login'); return false;" style="color:var(--accent);text-decoration:underline;">Đăng nhập</a></div>
+        </div>
+    </form>
+
+    <!-- Change Password Form -->
+    <form data-form="change-pw" style="display:none;" onsubmit="handleChangePasswordSubmit(event)">
+        <div class="auth-body">
+            <div class="auth-error" id="cpwError"></div>
+            <div class="field"><label>Mật khẩu hiện tại</label><input type="password" name="oldPassword" required placeholder="••••••"></div>
+            <div class="field"><label>Mật khẩu mới</label><input type="password" name="newPassword" required placeholder="Ít nhất 6 ký tự"></div>
+            <div class="field"><label>Xác nhận mật khẩu mới</label><input type="password" name="confirmNewPassword" required placeholder="Nhập lại mật khẩu mới"></div>
+            <button type="submit" class="btn btn-primary btn-lg btn-block">Đổi mật khẩu</button>
         </div>
     </form>
 </div>

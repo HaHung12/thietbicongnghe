@@ -74,6 +74,13 @@ async function apiRegister(username, password, email, fullName) {
     });
 }
 
+async function apiChangePassword(username, oldPassword, newPassword) {
+    return apiCall('/auth/change-password', {
+        method: 'POST',
+        body: JSON.stringify({ username, oldPassword, newPassword }),
+    });
+}
+
 /* ---- Products ------------------------------------------------------------ */
 async function apiListProducts(page, size) {
     return apiCall(`/api/products?page=${page}&size=${size}`);
@@ -500,7 +507,13 @@ function switchAuthTab(tab) {
     const registerTab = document.querySelector('[data-tab="register"]');
     const loginForm = document.querySelector('[data-form="login"]');
     const registerForm = document.querySelector('[data-form="register"]');
+    const changePwForm = document.querySelector('[data-form="change-pw"]');
+    const tabs = document.querySelector('.auth-tabs');
     const authError = document.querySelector('.auth-error');
+
+    // Trở lại chế độ đăng nhập/đăng ký: hiện lại tabs, ẩn form đổi mật khẩu
+    if (tabs) tabs.style.display = '';
+    if (changePwForm) changePwForm.style.display = 'none';
 
     loginTab?.classList.remove('active');
     registerTab?.classList.remove('active');
@@ -558,18 +571,76 @@ async function handleRegisterSubmit(e) {
     if (ok) switchAuthTab('login');
 }
 
+/* ---- Đổi mật khẩu ---- */
+function openChangePassword() {
+    if (!state.user) {
+        openModal();
+        switchAuthTab('login');
+        showToast('Cần đăng nhập', 'Đăng nhập trước khi đổi mật khẩu', 'info');
+        return;
+    }
+    document.querySelector('.account-menu')?.classList.remove('open');
+
+    const tabs = document.querySelector('.auth-tabs');
+    const loginForm = document.querySelector('[data-form="login"]');
+    const registerForm = document.querySelector('[data-form="register"]');
+    const changePwForm = document.querySelector('[data-form="change-pw"]');
+    const cpwError = document.getElementById('cpwError');
+
+    if (tabs) tabs.style.display = 'none';            // ẩn tab login/register
+    if (loginForm) loginForm.style.display = 'none';
+    if (registerForm) registerForm.style.display = 'none';
+    if (changePwForm) { changePwForm.style.display = 'block'; changePwForm.reset(); }
+    if (cpwError) cpwError.classList.remove('show');
+
+    openModal();
+}
+
+async function handleChangePasswordSubmit(e) {
+    e.preventDefault();
+    const cpwError = document.getElementById('cpwError');
+    const setErr = (m) => { if (cpwError) { cpwError.textContent = m; cpwError.classList.add('show'); } };
+    if (cpwError) cpwError.classList.remove('show');
+
+    if (!state.user) { setErr('Bạn cần đăng nhập trước'); return; }
+
+    const fd = new FormData(e.target);
+    const oldPassword = fd.get('oldPassword');
+    const newPassword = fd.get('newPassword');
+    const confirm = fd.get('confirmNewPassword');
+
+    if (newPassword !== confirm) { setErr('Mật khẩu mới không khớp'); return; }
+
+    try {
+        const msg = await apiChangePassword(state.user.username, oldPassword, newPassword);
+        if (msg === 'Đổi mật khẩu thành công') {
+            showToast('Đổi mật khẩu thành công', 'Hãy dùng mật khẩu mới cho lần đăng nhập sau', 'ok');
+            e.target.reset();
+            closeModal();
+        } else {
+            setErr(msg || 'Đổi mật khẩu thất bại');
+        }
+    } catch (err) {
+        console.error('Change password error:', err);
+        setErr('Không thể kết nối máy chủ');
+    }
+}
+
 function updateAccountUI() {
     const nameEl = document.querySelector('.account-menu .who .name');
     const roleEl = document.querySelector('.account-menu .who .role');
     const loginItem = document.querySelector('[data-menu="login"]');
+    const changePwItem = document.querySelector('[data-menu="change-pw"]');
     if (state.user) {
         if (nameEl) nameEl.textContent = state.user.username;
         if (roleEl) roleEl.textContent = 'Đã đăng nhập';
         if (loginItem) loginItem.style.display = 'none';
+        if (changePwItem) changePwItem.style.display = 'flex';
     } else {
         if (nameEl) nameEl.textContent = 'Khách';
         if (roleEl) roleEl.textContent = 'Chưa đăng nhập';
         if (loginItem) loginItem.style.display = 'flex';
+        if (changePwItem) changePwItem.style.display = 'none';
     }
 }
 
