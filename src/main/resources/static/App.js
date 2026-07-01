@@ -171,20 +171,24 @@ async function loadProducts() {
 }
 
 async function addToCart(productId) {
+    if (!productId) {
+        showToast('Lỗi', 'productId không hợp lệ', 'err');
+        return;
+    }
+
     if (!state.user) {
         openModal();
         switchAuthTab('login');
-        showToast('Cần đăng nhập', 'Vui lòng đăng nhập để thêm vào giỏ', 'info');
         return;
     }
 
     try {
-        await apiAddToCart(state.user.username, productId);
+        await apiAddToCart(state.user.username, Number(productId));
         await loadCart();
         showToast('Đã thêm vào giỏ', '', 'ok');
     } catch (err) {
-        console.error('Add to cart error:', err);
-        showToast('Không thể thêm vào giỏ', err.message, 'err');
+        console.error(err);
+        showToast('Add to cart lỗi', err.message, 'err');
     }
 }
 
@@ -323,6 +327,7 @@ function renderCart() {
         const price = product.price ?? item.price ?? 0;
         const qty = item.quantity ?? 1;
         const cartId = item.id ?? item.cartId;
+        if (!cartId) return '';
 
         return `
       <div class="cart-item">

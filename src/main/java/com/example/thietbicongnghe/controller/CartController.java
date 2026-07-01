@@ -17,9 +17,9 @@ public class CartController {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // =========================
+    // =====================================================
     // GET CART
-    // =========================
+    // =====================================================
     @GetMapping
     public ResponseEntity<List<Map<String, Object>>> getCart(
             @RequestParam String username
@@ -34,26 +34,45 @@ public class CartController {
                 p.price,
                 c.quantity
             FROM cart c
-            JOIN products p ON c.product_id = p.id
+            LEFT JOIN products p ON c.product_id = p.id
             WHERE c.username = ?
         """;
 
-        List<Map<String, Object>> result =
-                jdbcTemplate.queryForList(sql, username);
+        List<Map<String, Object>> result = jdbcTemplate.queryForList(sql, username);
 
         return ResponseEntity.ok(result);
     }
 
-    // =========================
+    // =====================================================
     // ADD TO CART
-    // =========================
+    // =====================================================
     @PostMapping("/add")
     public ResponseEntity<String> addToCart(
             @RequestParam String username,
-            @RequestParam int productId
+            @RequestParam Integer productId
     ) {
 
-        // ✔ FIX: check tồn tại record
+        // validate input
+        if (username == null || username.isBlank()) {
+            return ResponseEntity.badRequest().body("username không hợp lệ");
+        }
+
+        if (productId == null) {
+            return ResponseEntity.badRequest().body("productId không hợp lệ");
+        }
+
+        // check product tồn tại (tránh 500 do product không có)
+        Integer productExists = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM products WHERE id = ?",
+                Integer.class,
+                productId
+        );
+
+        if (productExists == null || productExists == 0) {
+            return ResponseEntity.badRequest().body("Sản phẩm không tồn tại");
+        }
+
+        // check cart item
         String checkSql = """
             SELECT COUNT(*) 
             FROM cart 
@@ -67,8 +86,9 @@ public class CartController {
                 productId
         );
 
-        if (count != null && count > 0) {
+        if (count == null) count = 0;
 
+        if (count > 0) {
             jdbcTemplate.update("""
                 UPDATE cart 
                 SET quantity = quantity + 1 
@@ -76,7 +96,6 @@ public class CartController {
             """, username, productId);
 
         } else {
-
             jdbcTemplate.update("""
                 INSERT INTO cart (username, product_id, quantity) 
                 VALUES (?, ?, 1)
@@ -86,9 +105,9 @@ public class CartController {
         return ResponseEntity.ok("Thêm vào giỏ hàng thành công");
     }
 
-    // =========================
+    // =====================================================
     // UPDATE QUANTITY
-    // =========================
+    // =====================================================
     @PostMapping("/update")
     public ResponseEntity<String> updateQuantity(
             @RequestParam int cartId,
@@ -96,10 +115,7 @@ public class CartController {
     ) {
 
         if (quantity <= 0) {
-            jdbcTemplate.update(
-                    "DELETE FROM cart WHERE id = ?",
-                    cartId
-            );
+            jdbcTemplate.update("DELETE FROM cart WHERE id = ?", cartId);
             return ResponseEntity.ok("Đã xóa sản phẩm khỏi giỏ hàng");
         }
 
@@ -116,9 +132,9 @@ public class CartController {
         return ResponseEntity.ok("Cập nhật thành công");
     }
 
-    // =========================
+    // =====================================================
     // DELETE ITEM
-    // =========================
+    // =====================================================
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteFromCart(
             @RequestParam int cartId
