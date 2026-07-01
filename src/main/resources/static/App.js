@@ -5,17 +5,19 @@ const API_BASE = '';
    STATE
    ------------------------------------------------------------------------- */
 const state = {
-    user: null,          // { username }
+    user: null,
     currentPage: 0,
     pageSize: 12,
     search: '',
     category: '',
     products: [],
-    cart: [],             // mảng item trả về từ GET /api/cart
+    cart: [],
     totalPages: 0,
     totalElements: 0,
-};
 
+    // Thêm
+    suggestions: [],
+};
 /* -------------------------------------------------------------------------
    API LAYER
    Mọi endpoint bám sát đúng OpenAPI spec đã cung cấp:
@@ -81,6 +83,71 @@ async function apiListProducts(page, size) {
 
 async function apiSearchProducts(name, page, size) {
     return apiCall(`/api/products/search?name=${encodeURIComponent(name)}&page=${page}&size=${size}`);
+}
+async function fetchSuggestions(keyword) {
+
+    keyword = keyword.trim();
+
+    if (keyword.length < 2) {
+        state.suggestions = [];
+        renderSuggestions();
+        return;
+    }
+
+    try {
+
+        const data = await apiSearchProducts(keyword, 0, 5);
+
+        state.suggestions = data.content || [];
+
+        renderSuggestions();
+
+    } catch (e) {
+
+        console.error(e);
+
+    }
+
+}
+function renderSuggestions() {
+
+    const box = document.getElementById("search-suggestions");
+
+    if (!box) return;
+
+    if (state.suggestions.length === 0) {
+
+        box.style.display = "none";
+        box.innerHTML = "";
+
+        return;
+
+    }
+
+    box.innerHTML = state.suggestions.map(product => `
+
+        <div class="suggestion-item"
+             onclick="chooseSuggestion('${product.name.replace(/'/g,"\\'")}')">
+
+            🔍 ${escapeHtml(product.name)}
+
+        </div>
+
+    `).join("");
+
+    box.style.display = "block";
+
+}
+function chooseSuggestion(name) {
+
+    document.querySelector('input[type="search"]').value = name;
+
+    state.search = name;
+
+    document.getElementById("search-suggestions").style.display = "none";
+
+    submitSearch();
+
 }
 
 async function apiProductsByCategory(category, page, size) {
@@ -577,16 +644,76 @@ function updateAccountUI() {
    EVENT SETUP (chỉ cho các phần tử KHÔNG dùng inline onclick)
    ------------------------------------------------------------------------- */
 function setupEventListeners() {
+
     const searchInput = document.querySelector('input[type="search"]');
+
+    let debounceTimer;
+
     if (searchInput) {
+
         searchInput.addEventListener('input', (e) => {
+
+            const keyword = e.target.value.trim();
+
             const clear = document.querySelector('.search-clear');
-            if (clear) clear.style.display = e.target.value.trim() ? 'inline-flex' : 'none';
+
+            if (clear) {
+                clear.style.display = keyword ? 'inline-flex' : 'none';
+            }
+
+            clearTimeout(debounceTimer);
+
+            debounceTimer = setTimeout(() => {
+
+                fetchSuggestions(keyword);
+
+            }, 300);
+
         });
+
         searchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') submitSearch();
+
+            if (e.key === 'Enter') {
+
+                const box = document.getElementById("search-suggestions");
+
+                if (box) {
+                    box.style.display = "none";
+                }
+
+                submitSearch();
+
+            }
+
         });
+
+        searchInput.addEventListener("blur", () => {
+
+            setTimeout(() => {
+
+                const box = document.getElementById("search-suggestions");
+
+                if (box) {
+                    box.style.display = "none";
+                }
+
+            }, 200);
+
+        });
+
+        searchInput.addEventListener("focus", () => {
+
+            if (state.suggestions.length > 0) {
+
+                renderSuggestions();
+
+            }
+
+        });
+
     }
+
+}
 
     const backdrop = document.getElementById('backdrop');
     if (backdrop) {
@@ -605,7 +732,7 @@ function setupEventListeners() {
             menu.classList.remove('open');
         }
     });
-}
+
 
 /* -------------------------------------------------------------------------
    INIT

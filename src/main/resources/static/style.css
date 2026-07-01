@@ -130,17 +130,63 @@ img{display:block;max-width:100%;}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.35;}}
 
 .search{
-    flex:1 1 auto;display:flex;align-items:center;gap:10px;
-    background:var(--panel);border:1px solid var(--line);
-    border-radius:var(--radius-sm);padding:0 12px;height:44px;
+    flex:1 1 auto;
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    position:relative;
+
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius-sm);
+    padding:0 12px;
+    height:44px;
+
     transition:border-color .2s, box-shadow .2s;
 }
-.search:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(47,231,201,0.12);}
-.search svg{width:17px;height:17px;color:var(--muted);flex:0 0 auto;}
-.search input{border:none;background:none;outline:none;width:100%;height:100%;}
-.search input::placeholder{color:var(--faint);}
+
+.search:focus-within{
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px rgba(47,231,201,.12);
+}
+
+.search svg{
+    width:17px;
+    height:17px;
+    color:var(--muted);
+    flex:0 0 auto;
+}
+
+.search input{
+    width:100%;
+    height:100%;
+    border:none;
+    outline:none;
+    background:transparent;
+    color:var(--text);
+    font-size:15px;
+}
+
+.search input::placeholder{
+    color:var(--faint);
+}
+
 .search .search-clear{
-    display:none;color:var(--muted);font-size:18px;line-height:1;padding:4px;border-radius:4px;
+    display:none;
+    color:var(--muted);
+    font-size:18px;
+    line-height:1;
+    padding:4px;
+    border-radius:4px;
+}
+
+.search .search-clear:hover{
+    color:var(--danger);
+}
+
+.search.has-value .search-clear{
+    display:inline-flex;
 }
 .search .search-clear:hover{color:var(--danger);}
 .search.has-value .search-clear{display:inline-flex;}
@@ -587,4 +633,45 @@ body.locked{overflow:hidden;}
     *,*::before,*::after{animation-duration:0.001ms !important;animation-iteration-count:1 !important;transition-duration:0.001ms !important;scroll-behavior:auto !important;}
     .ticker-track,.console-grid,.brand .glyph{animation:none;}
     .reveal{opacity:1;transform:none;}
+}
+.search-suggestions{
+    position:absolute;
+    top:calc(100% + 6px);
+    left:0;
+    right:0;
+
+    background:var(--panel);
+
+    border:1px solid var(--line);
+
+    border-radius:12px;
+
+    display:none;
+
+    overflow:hidden;
+
+    max-height:260px;
+
+    overflow-y:auto;
+
+    z-index:9999;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.35);
+}
+
+.suggestion-item{
+    padding:12px 16px;
+    cursor:pointer;
+    color:var(--text);
+    border-bottom:1px solid var(--line);
+    transition:.2s;
+}
+
+.suggestion-item:last-child{
+    border-bottom:none;
+}
+
+.suggestion-item:hover{
+    background:rgba(47,231,201,.08);
+    color:var(--accent);
 }
