@@ -1,0 +1,70 @@
+name: Deploy Spring Boot to Docker VM
+
+on:
+  push:
+    branches:
+      - binh  # Quy trình tự động chạy mỗi khi bạn 'git push' lên nhánh binh
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Tải toàn bộ mã nguồn từ nhánh binh trên GitHub về máy chủ ảo của GitHub Actions
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # 2. Cài đặt môi trường Java 17 để có thể đóng gói ứng dụng
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    # 3. Biên dịch và đóng gói dự án thành file thực thi .jar bằng Maven (Bỏ qua chạy test để không bị kẹt DB)
+    - name: Build with Maven
+      run: mvn clean package -DskipTests
+
+    # 4. Sử dụng thông tin bí mật _BINH để SSH vào máy ảo dọn dẹp các container Docker cũ
+    - name: Clean old Docker Container on VM
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.VM_HOST_BINH }}
+        username: ${{ secrets.VM_USER_BINH }}
+        password: ${{ secrets.VM_PASSWORD_BINH }}
+        script: |
+          # Tạo thư mục app trên máy ảo nếu chưa có
+          mkdir -p ~/app
+          # Dừng và xóa container cũ nếu đang chạy để tránh chiếm dụng cổng 8080
+          docker stop thietbicongnghe-app || true
+          docker rm thietbicongnghe-app || true
+
+    # 5. Truyền (Copy) file .jar vừa build xong sang thư mục ~/app trên máy ảo của bạn (Thêm cấu hình tự tạo thư mục)
+    - name: Copy JAR file to VM
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.VM_HOST_BINH }}
+        username: ${{ secrets.VM_USER_BINH }}
+        password: ${{ secrets.VM_PASSWORD_BINH }}
+        source: "target/*.jar"
+        target: "~/app"
+        rm: false           # Không xóa file cũ trước khi copy
+        strip_components: 0 # Giữ nguyên cấu trúc thư mục target khi truyền sang
+
+    # 6. Ra lệnh cho máy ảo khởi động Docker container độc lập chạy file .jar mượt mà
+    - name: Run App in Docker Container
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.VM_HOST_BINH }}
+        username: ${{ secrets.VM_USER_BINH }}
+        password: ${{ secrets.VM_PASSWORD_BINH }}
+        script: |
+          cd ~/app
+          # Khởi chạy một container openjdk nền Linux Alpine chạy ngầm (-d), map cổng 8080 của máy ảo vào container
+          docker run -d \
+            --name thietbicongnghe-app \
+            -p 8080:8080 \
+            -v ~/app/target:/app-data \
+            eclipse-temurin:17-jdk-alpine \
+            java -jar /app-data/thietbicongnghe-0.0.1-SNAPSHOT.jar || java -jar /app-data/*.jar
