@@ -9,6 +9,6 @@ public class TrangChuController {
     @GetMapping("/trang-chu")
     public String viewTrangChu() {
         // Chuyển tiếp thẳng đến file html tĩnh nằm trong thư mục static
-        return "forward:/trangchu.html"; 
+        return "forward:/index.html";
     }
 }

@@ -21,6 +21,7 @@ public class ProductController {
         this.productService = productService;
     }
 
+    // GET /api/products?page=0&size=12
     @GetMapping
     public Page<Product> listProducts(@RequestParam(defaultValue = "0") int page,
                                       @RequestParam(defaultValue = "12") int size) {
@@ -28,6 +29,7 @@ public class ProductController {
         return productService.listAll(pageable);
     }
 
+    // SEARCH
     @GetMapping("/search")
     public Page<Product> searchProducts(@RequestParam String name,
                                         @RequestParam(defaultValue = "0") int page,
@@ -36,6 +38,7 @@ public class ProductController {
         return productService.searchByName(name, pageable);
     }
 
+    // BY CATEGORY
     @GetMapping("/category/{category}")
     public Page<Product> productsByCategory(@PathVariable String category,
                                             @RequestParam(defaultValue = "0") int page,
@@ -44,20 +47,26 @@ public class ProductController {
         return productService.findByCategory(category, pageable);
     }
 
+    // GET BY ID
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProduct(@PathVariable Long id) {
         Optional<Product> product = productService.findById(id);
-        return product.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        return product.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    // CREATE
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         Product saved = productService.save(product);
-        return ResponseEntity.created(URI.create("/api/products/" + saved.getId())).body(saved);
+        return ResponseEntity.created(URI.create("/api/products/" + saved.getId()))
+                .body(saved);
     }
 
+    // UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id,
+                                                 @RequestBody Product product) {
         Optional<Product> existing = productService.findById(id);
         if (existing.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -66,6 +75,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.save(product));
     }
 
+    // DELETE
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         Optional<Product> existing = productService.findById(id);
