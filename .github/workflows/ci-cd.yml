@@ -2,7 +2,7 @@ name: Spring Boot CI-CD (Docker VM)
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, test ]  # <--- Cách nhau bằng dấu phẩy bên trong dấu ngoặc vuông
 
 jobs:
   build:
@@ -21,7 +21,6 @@ jobs:
       - name: Build Maven (CI only)
         run: mvn clean package -DskipTests
 
-
   deploy:
     runs-on: ubuntu-latest
     needs: build
@@ -35,6 +34,6 @@ jobs:
           key: ${{ secrets.VM_SSH_KEY }}
           port: 22
           script: |
-            cd /home/vboxuser/thietbicongnghe
+            cd /home/manh/thietbicongnghe
             git pull origin main
-            docker compose up -d --build backend frontend
+            docker compose up -d --build backend
