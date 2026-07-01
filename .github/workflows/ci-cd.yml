@@ -37,6 +37,4 @@ jobs:
           script: |
             cd /home/vboxuser/thietbicongnghe
             git pull origin main
-
-            # CHỈ rebuild backend, KHÔNG down toàn bộ system
             docker compose up -d --build backend
