@@ -46,7 +46,7 @@ public class DataLoader implements CommandLineRunner {
         p2.setName("MacBook Neo 13 inch A18 Pro 8GB/256GB");
         p2.setBrand("Apple");
         p2.setCategory("Laptop");
-        p2.setImageUrl("https://example.com/images/macbook-neo.jpg");
+        p2.setImageUrl("https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRn-WLFvdojviP-fFoWsgzwnbQWKTFRUYCf646wDiEGGMiIxwnnfnOshkNwHUSpF9iRbIUZQdzOULzavxBqqS1BvaJF4if5PRSI0V8mgDwQaLkBXa6aNABQXzW1pd_m-jGlanbpA6Re7g&usqp=CAc");
         p2.setPrice(new BigDecimal("18990000"));
         p2.setDescription("MacBook Neo 13 inch A18 Pro - 8GB/256GB, thiết kế siêu mỏng.");
         p2.setRating(4.9);
