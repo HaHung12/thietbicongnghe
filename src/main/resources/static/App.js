@@ -1,7 +1,3 @@
-/* =========================================================================
-   VOLT · Thiết bị công nghệ — Application Logic
-   Khớp đúng theo OpenAPI spec: http://localhost:8080/v3/api-docs
-   ========================================================================= */
 
 const API_BASE = 'http://localhost:8080';
 
