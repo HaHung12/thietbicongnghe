@@ -1,11 +1,9 @@
-FROM maven:3.9.9-eclipse-temurin-17
+FROM eclipse-temurin:17-jdk
 
 WORKDIR /app
 
-# copy toàn bộ code
-COPY . .
+COPY target/*.jar app.jar
 
 EXPOSE 8080
 
-# chạy trực tiếp Spring Boot (DEV MODE)
-CMD ["mvn", "spring-boot:run"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
