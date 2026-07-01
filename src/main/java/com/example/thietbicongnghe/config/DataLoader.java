@@ -26,7 +26,7 @@ public class DataLoader implements CommandLineRunner {
         p1.setName("HP 15 fc0023AU R5 7520U");
         p1.setBrand("HP");
         p1.setCategory("Laptop");
-        p1.setImageUrl("https://example.com/images/hp15.jpg");
+        p1.setImageUrl("https://cdn.tgdd.vn/Files/2021/09/14/1382693/laptophp_1280x720-800-resize.jpg");
         p1.setPrice(new BigDecimal("21990000"));
         p1.setDescription("Laptop HP 15, Ryzen 5 7520U, RAM 16GB, SSD 512GB.");
         p1.setRating(4.9);
