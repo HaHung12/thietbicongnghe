@@ -18,15 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function showLoginForm() {
-    const loginForm = document.getElementById('login-form');
-    const registerForm = document.getElementById('register-form');
-    const mainScreen = document.getElementById('main-screen');
-
-    loginForm.style.display = 'block';
-    registerForm.style.display = 'none';
-    mainScreen.style.display = 'none';
     setMessage('');
-    loginForm.reset();
     document.getElementById('login-username').focus();
 }
 
@@ -34,10 +26,8 @@ function showRegisterForm() {
     const registerForm = document.getElementById('register-form');
 
     document.getElementById('login-form').style.display = 'none';
-    registerForm.style.display = 'block';
     document.getElementById('main-screen').style.display = 'none';
     setMessage('');
-    registerForm.reset();
     document.getElementById('reg-username').focus();
 }
 
@@ -72,7 +62,6 @@ async function register(event) {
             showLoginForm();
             return;
         }
-
         setMessage(message);
     } catch (error) {
         setMessage('Không thể kết nối máy chủ');
@@ -98,7 +87,6 @@ async function login(event) {
             showMainScreen(userData.username);
             return;
         }
-
         setMessage(message);
     } catch (error) {
         setMessage('Không thể kết nối máy chủ');

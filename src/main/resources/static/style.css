@@ -4,42 +4,26 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
     margin: 0;
 }
 
 .auth-container {
     background: white;
     padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    width: 350px;
 }
 
-.form-box h2 { text-align: center; color: #333; }
 
 input {
     width: 100%;
-    padding: 12px;
     margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-sizing: border-box; /* Quan trọng để input không bị tràn */
 }
 
 button {
     width: 100%;
-    padding: 12px;
-    background-color: #007bff;
     color: white;
     border: none;
-    border-radius: 6px;
     cursor: pointer;
     font-size: 16px;
 }
 
-button:hover { background-color: #0056b3; }
 
-p { text-align: center; font-size: 14px; margin-top: 15px; }
-
-.message { text-align: center; margin-top: 15px; color: #d9534f; font-weight: bold; }
