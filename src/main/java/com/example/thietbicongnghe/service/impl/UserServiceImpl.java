@@ -3,15 +3,18 @@ package com.example.thietbicongnghe.service.impl;
 import com.example.thietbicongnghe.entity.User;
 import com.example.thietbicongnghe.repository.UserRepository;
 import com.example.thietbicongnghe.service.UserService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -33,6 +36,9 @@ public class UserServiceImpl implements UserService {
             return "Tên đăng nhập đã tồn tại";
         }
 
+        // Băm mật khẩu trước khi lưu (không lưu mật khẩu dạng thô nữa)
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         userRepository.save(user);
         return "Đăng ký thành công";
     }
@@ -52,7 +58,8 @@ public class UserServiceImpl implements UserService {
             return "Không tồn tại tài khoản";
         }
 
-        if (!user.getPassword().equals(password)) {
+        // So khớp mật khẩu thô với mật khẩu đã băm trong DB
+        if (!passwordEncoder.matches(password, user.getPassword())) {
             return "Sai mật khẩu";
         }
 
