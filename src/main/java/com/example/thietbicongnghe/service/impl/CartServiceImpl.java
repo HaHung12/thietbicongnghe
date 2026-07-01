@@ -24,36 +24,38 @@ public class CartServiceImpl implements CartService {
     @Override
     public Cart getCart(String sessionId) {
 
-        return cartRepository.findBySessionId(sessionId).orElseGet(() -> {
-            Cart cart = new Cart();
-            cart.setSessionId(sessionId);
+        return cartRepository.findBySessionId(sessionId)
+                .orElseGet(() -> {
+                    Cart cart = new Cart();
+                    cart.setSessionId(sessionId);
 
-            // ✔ FIX: tránh null items
-            cart.setItems(new ArrayList<>());
+                    // FIX 1: luôn init list để tránh null
+                    cart.setItems(new ArrayList<>());
 
-            return cartRepository.save(cart);
-        });
+                    return cartRepository.save(cart);
+                });
     }
 
     @Override
     public Cart addToCart(String sessionId, Product product, int quantity) {
 
-        if (product == null) {
-            throw new RuntimeException("Product cannot be null");
+        // FIX 2: chặn null product gây 500
+        if (product == null || product.getId() == null) {
+            throw new RuntimeException("Product không hợp lệ");
         }
 
         Cart cart = getCart(sessionId);
 
-        // ✔ FIX: đảm bảo items luôn tồn tại
+        // FIX 3: đảm bảo items không null
         if (cart.getItems() == null) {
             cart.setItems(new ArrayList<>());
         }
 
         Optional<CartItem> existingItem = cart.getItems().stream()
                 .filter(item ->
-                        item.getProduct() != null &&
-                                item.getProduct().getId() != null &&
-                                item.getProduct().getId().equals(product.getId())
+                        item.getProduct() != null
+                                && item.getProduct().getId() != null
+                                && item.getProduct().getId().equals(product.getId())
                 )
                 .findFirst();
 
@@ -65,6 +67,7 @@ public class CartServiceImpl implements CartService {
             item.setCart(cart);
             item.setProduct(product);
             item.setQuantity(quantity);
+
             cart.getItems().add(item);
         }
 
@@ -81,9 +84,9 @@ public class CartServiceImpl implements CartService {
         }
 
         cart.getItems().removeIf(item ->
-                item.getProduct() != null &&
-                        item.getProduct().getId() != null &&
-                        item.getProduct().getId().equals(productId)
+                item.getProduct() != null
+                        && item.getProduct().getId() != null
+                        && item.getProduct().getId().equals(productId)
         );
 
         return cartRepository.save(cart);
