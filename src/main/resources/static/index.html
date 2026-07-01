@@ -29,9 +29,27 @@
         <div class="brand">VOLT<span class="dot">.</span><div class="glyph"></div></div>
 
         <div class="search">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-            <input type="search" placeholder="Tìm kiếm thiết bị..." autocomplete="off">
-            <button type="button" class="search-clear" onclick="clearSearch()">✕</button>
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+
+            <input
+                    type="search"
+                    placeholder="Tìm kiếm thiết bị..."
+                    autocomplete="off">
+
+            <button
+                    type="button"
+                    class="search-clear"
+                    onclick="clearSearch()">
+                ✕
+            </button>
+
+            <div id="search-suggestions" class="search-suggestions"></div>
+
         </div>
 
         <div class="header-actions">
