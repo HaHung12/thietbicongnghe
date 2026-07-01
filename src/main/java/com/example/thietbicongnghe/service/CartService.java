@@ -1,19 +1,18 @@
 package com.example.thietbicongnghe.service;
 
-import com.example.thietbicongnghe.entity.Cart;
-import com.example.thietbicongnghe.entity.Product;
+import com.example.thietbicongnghe.entity.CartItem;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface CartService {
 
-    Cart getCart(String sessionId);
+    List<CartItem> getCart(String username);
 
-    Cart addToCart(String sessionId, Product product, int quantity);
+    void addToCart(String username, Long productId);
 
-    Cart removeFromCart(String sessionId, Long productId);
+    void updateQuantity(Long cartItemId, int quantity);
 
-    void clearCart(String sessionId);
+    void removeItem(Long cartItemId);
 
-    Optional<Cart> findCart(String sessionId);
+    void clearCart(String username);
 }

@@ -1,10 +1,14 @@
-name: Spring Boot CI-CD (Docker VM)
+name: Spring Boot CI-CD (Self Hosted VM)
 
 on:
   push:
     branches: [ main, test ]  # <--- Cách nhau bằng dấu phẩy bên trong dấu ngoặc vuông
 
 jobs:
+
+  # =========================
+  # CI - Build trên GitHub
+  # =========================
   build:
     runs-on: ubuntu-latest
 
@@ -18,14 +22,22 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Build Maven (CI only)
+      - name: Build Maven
         run: mvn clean package -DskipTests
 
+<<<<<<< HEAD
+=======
+
+  # =========================
+  # CD - Deploy trên VM
+  # =========================
+>>>>>>> df644625b5d0fc4032790c2d200692fdbf14b0e7
   deploy:
-    runs-on: ubuntu-latest
     needs: build
+    runs-on: self-hosted
 
     steps:
+<<<<<<< HEAD
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -37,3 +49,27 @@ jobs:
             cd /home/manh/thietbicongnghe
             git pull origin test
             docker compose up -d --build backend
+=======
+      - name: Debug VM path
+        run: |
+          echo "Current directory:"
+          pwd
+          ls -la
+
+      - name: Pull latest code
+        run: |
+          cd /home/vboxuser/thietbicongnghe
+          git pull origin main
+
+      - name: Deploy with Docker Compose
+        run: |
+          set -e
+
+          echo "Stop containers..."
+          docker compose -f /home/vboxuser/thietbicongnghe/docker-compose.yml down || true
+
+          echo "Build & start containers..."
+          docker compose -f /home/vboxuser/thietbicongnghe/docker-compose.yml up -d --build
+
+          echo "Deployment completed successfully"
+>>>>>>> df644625b5d0fc4032790c2d200692fdbf14b0e7

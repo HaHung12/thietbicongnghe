@@ -17,16 +17,25 @@ public class DataLoader implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
-        if (productRepository.count() > 0) {
+    public void run(String... args) {
+
+        long count = productRepository.count();
+
+        // ✔ log để biết chắc có chạy seed hay không
+        System.out.println("=== DataLoader check: products = " + count + " ===");
+
+        if (count > 0) {
+            System.out.println("Data already exists → skip seeding");
             return;
         }
+
+        System.out.println("Seeding products...");
 
         Product p1 = new Product();
         p1.setName("HP 15 fc0023AU R5 7520U");
         p1.setBrand("HP");
         p1.setCategory("Laptop");
-        p1.setImageUrl("https://example.com/images/hp15.jpg");
+        p1.setImageUrl("https://cdn.tgdd.vn/Files/2021/09/14/1382693/laptophp_1280x720-800-resize.jpg");
         p1.setPrice(new BigDecimal("21990000"));
         p1.setDescription("Laptop HP 15, Ryzen 5 7520U, RAM 16GB, SSD 512GB.");
         p1.setRating(4.9);
@@ -56,12 +65,12 @@ public class DataLoader implements CommandLineRunner {
         productRepository.save(p3);
 
         Product p4 = new Product();
-        p4.setName("Phụ kiện Gaming Mouse Pro");
+        p4.setName("Gaming Mouse Pro");
         p4.setBrand("Logitech");
-        p4.setCategory("Phụ kiện máy tính");
-        p4.setImageUrl("https://example.com/images/mouse-pro.jpg");
+        p4.setCategory("Phụ kiện");
+        p4.setImageUrl("https://m.media-amazon.com/images/I/71QGU-U1u9L._AC_SL1500_.jpg");
         p4.setPrice(new BigDecimal("990000"));
-        p4.setDescription("Chuột chơi game có dây, thiết kế ergonomic.");
+        p4.setDescription("Chuột gaming ergonomic.");
         p4.setRating(4.7);
         p4.setSold(420);
         productRepository.save(p4);
@@ -69,12 +78,14 @@ public class DataLoader implements CommandLineRunner {
         Product p5 = new Product();
         p5.setName("Màn hình 24 inch Full HD");
         p5.setBrand("Samsung");
-        p5.setCategory("Màn hình máy tính");
+        p5.setCategory("Màn hình");
         p5.setImageUrl("https://example.com/images/monitor.jpg");
         p5.setPrice(new BigDecimal("5490000"));
-        p5.setDescription("Màn hình 24 inch Full HD, viền mỏng.");
+        p5.setDescription("Màn hình 24 inch Full HD.");
         p5.setRating(4.6);
         p5.setSold(1560);
         productRepository.save(p5);
+
+        System.out.println("Seeding completed successfully!");
     }
 }
