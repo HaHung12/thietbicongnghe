@@ -6,12 +6,14 @@ on:
 
 jobs:
 
-  # ================= CI (GitHub)
+  # =========================
+  # CI - Build trên GitHub
+  # =========================
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
@@ -24,18 +26,33 @@ jobs:
         run: mvn clean package -DskipTests
 
 
-  # ================= CD (VM SELF-HOSTED)
+  # =========================
+  # CD - Deploy trên VM
+  # =========================
   deploy:
     needs: build
     runs-on: self-hosted
 
     steps:
+      - name: Debug VM path
+        run: |
+          echo "Current directory:"
+          pwd
+          ls -la
+
       - name: Pull latest code
         run: |
           cd /home/vboxuser/thietbicongnghe
           git pull origin main
 
-      - name: Build & Deploy Docker
+      - name: Deploy with Docker Compose
         run: |
-          docker compose down
-          docker compose up -d --build
+          set -e
+
+          echo "Stop containers..."
+          docker compose -f /home/vboxuser/thietbicongnghe/docker-compose.yml down || true
+
+          echo "Build & start containers..."
+          docker compose -f /home/vboxuser/thietbicongnghe/docker-compose.yml up -d --build
+
+          echo "Deployment completed successfully"
