@@ -1,5 +1,5 @@
 
-const API_BASE = 'http://localhost:8080';
+const API_BASE = '';
 
 /* -------------------------------------------------------------------------
    STATE
@@ -16,20 +16,6 @@ const state = {
     totalElements: 0,
 };
 
-/* -------------------------------------------------------------------------
-   API LAYER
-   Mọi endpoint bám sát đúng OpenAPI spec đã cung cấp:
-   - POST /auth/register        body: {username,password,fullName,email,role} -> string (token)
-   - POST /auth/login           body: {username,password}                     -> string (token)
-   - GET  /api/products         ?page&size                                    -> PageProduct
-   - GET  /api/products/{id}                                                  -> Product
-   - GET  /api/products/search  ?name&page&size                               -> PageProduct
-   - GET  /api/products/category/{category} ?page&size                       -> PageProduct
-   - POST /api/cart/add         ?username&productId   (QUERY PARAM, no body) -> string
-   - GET  /api/cart             ?username                                    -> array
-   - POST /api/cart/update      ?cartId&quantity       (QUERY PARAM)         -> string
-   - DELETE /api/cart/delete    ?cartId                                      -> string
-   ------------------------------------------------------------------------- */
 
 async function apiCall(endpoint, options = {}) {
     const method = options.method || 'GET';
