@@ -11,7 +11,7 @@ public class Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     // Mỗi user 1 giỏ hàng (đổi từ sessionId -> username cho khớp frontend)
     @Column(unique = true, nullable = false)
@@ -23,8 +23,8 @@ public class Cart {
     public Cart() {
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
 
     public String getUsername() { return username; }
     public void setUsername(String username) { this.username = username; }
