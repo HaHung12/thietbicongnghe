@@ -2,7 +2,7 @@ name: Spring Boot CI-CD (Self Hosted VM)
 
 on:
   push:
-    branches: [ main, test ]  # <--- Cách nhau bằng dấu phẩy bên trong dấu ngoặc vuông
+    branches: [ main ]
 
 jobs:
 
@@ -25,31 +25,15 @@ jobs:
       - name: Build Maven
         run: mvn clean package -DskipTests
 
-<<<<<<< HEAD
-=======
 
   # =========================
   # CD - Deploy trên VM
   # =========================
->>>>>>> df644625b5d0fc4032790c2d200692fdbf14b0e7
   deploy:
     needs: build
     runs-on: self-hosted
 
     steps:
-<<<<<<< HEAD
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.VM_HOST }}
-          username: ${{ secrets.VM_USER }}
-          password: ${{ secrets.VM_SSH_KEY }}
-          port: 22
-          script: |
-            cd /home/manh/thietbicongnghe
-            git pull origin test
-            docker compose up -d --build backend
-=======
       - name: Debug VM path
         run: |
           echo "Current directory:"
@@ -72,4 +56,3 @@ jobs:
           docker compose -f /home/vboxuser/thietbicongnghe/docker-compose.yml up -d --build
 
           echo "Deployment completed successfully"
->>>>>>> df644625b5d0fc4032790c2d200692fdbf14b0e7
